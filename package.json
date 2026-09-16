@@ -18,10 +18,12 @@
 		"check": "biome check . && turbo run typecheck",
 		"codegen": "bun --filter react-native-nitro-splash codegen",
 		"test": "turbo run test",
-		"example": "bun --cwd apps/example"
+		"example": "bun --cwd apps/example",
+		"prepare": "husky"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.2.4",
+		"husky": "^9.1.7",
 		"turbo": "^2.5.4",
 		"typescript": "^5.6.3"
 	},
