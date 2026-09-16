@@ -9,7 +9,7 @@ export default function App() {
 
 	useEffect(() => {
 		async function prepare() {
-			await new Promise((r) => setTimeout(r, 800));
+			await new Promise<void>((resolve) => setTimeout(resolve, 800));
 			setReady(true);
 			await hideAsync({ animation: SplashAnimation.Fade, durationMs: 350 });
 		}
