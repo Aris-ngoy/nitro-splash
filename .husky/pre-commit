@@ -1,1 +1,8 @@
-bunx biome check --write --staged
+output=$(bunx biome check --write --staged 2>&1) || {
+	code=$?
+	if echo "$output" | grep -q "No files were processed"; then
+		exit 0
+	fi
+	echo "$output"
+	exit $code
+}
