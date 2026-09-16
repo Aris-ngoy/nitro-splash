@@ -58,6 +58,9 @@
 		"react-native-nitro-modules": "^0.36.1",
 		"typescript": "^5.6.3"
 	},
+	"dependencies": {
+		"@expo/config-plugins": "~57.0.9"
+	},
 	"peerDependencies": {
 		"expo": "*",
 		"lottie-react-native": "*",

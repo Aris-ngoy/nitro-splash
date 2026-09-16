@@ -10,8 +10,11 @@ enum SplashImageLoader {
   static func loadLogo(targetWidthPt: Double) -> UIImage? {
     let scale = UIScreen.main.scale
     let targetPx = Int(targetWidthPt * scale)
-    let names = ["splashscreen_image", "SplashScreen", "BootSplashLogo"]
+    let names = ["SplashScreen", "SplashScreenLogo", "splashscreen_image", "BootSplashLogo"]
     for name in names {
+      if let named = UIImage(named: name)?.withRenderingMode(.alwaysOriginal) {
+        return named
+      }
       if let img = downsampledImage(named: name, targetPx: targetPx) {
         return img
       }
@@ -23,7 +26,7 @@ enum SplashImageLoader {
     guard let url = Bundle.main.url(forResource: named, withExtension: "png")
       ?? Bundle.main.url(forResource: named, withExtension: "jpg")
       ?? Bundle.main.url(forResource: named, withExtension: "webp") else {
-      if let asset = UIImage(named: named) {
+      if let asset = UIImage(named: named)?.withRenderingMode(.alwaysOriginal) {
         return asset
       }
       return nil
@@ -39,7 +42,7 @@ enum SplashImageLoader {
       kCGImageSourceThumbnailMaxPixelSize: targetPx,
     ] as CFDictionary
     guard let cg = CGImageSourceCreateThumbnailAtIndex(source, 0, thumbOptions) else { return nil }
-    return UIImage(cgImage: cg, scale: UIScreen.main.scale, orientation: .up)
+    return UIImage(cgImage: cg, scale: UIScreen.main.scale, orientation: .up).withRenderingMode(.alwaysOriginal)
   }
 
   private static func nullImage(targetPx _: Int) -> UIImage? {

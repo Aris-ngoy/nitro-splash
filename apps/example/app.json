@@ -6,8 +6,34 @@
 		"plugins": [
 			[
 				"react-native-nitro-splash",
-				{ "background": "#FFFFFF", "logoWidth": 120, "resizeMode": "contain" }
+				{
+					"background": "#0B1220",
+					"logo": "./assets/logo.png",
+					"logoWidth": 120,
+					"resizeMode": "contain"
+				}
 			]
-		]
+		],
+		"splash": {
+			"image": "./assets/logo.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#0B1220"
+		},
+		"ios": {
+			"bundleIdentifier": "com.harriscreativity.nitro-splash-example",
+			"infoPlist": {
+				"UIApplicationSceneManifest": {
+					"UIApplicationSupportsMultipleScenes": false,
+					"UISceneConfigurations": {
+						"UIWindowSceneSessionRoleApplication": [
+							{
+								"UISceneConfigurationName": "Default Configuration",
+								"UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate"
+							}
+						]
+					}
+				}
+			}
+		}
 	}
 }

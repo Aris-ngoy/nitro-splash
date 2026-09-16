@@ -6,9 +6,12 @@ import NitroModules
 public final class HybridSplashscreen: HybridSplashscreenSpec {
 	public override init() {
 		super.init()
+		DispatchQueue.main.async {
+			SplashOverlayWindow.startObserving()
+		}
 	}
 
-	public override var memorySize: Int {
+	public var memorySize: Int {
 		return 1024
 	}
 
@@ -59,6 +62,13 @@ public final class HybridSplashscreen: HybridSplashscreenSpec {
 
 	public func preventAutoHide() throws -> Bool {
 		SplashOverlayWindow.autoHidePrevented = true
+		if Thread.isMainThread {
+			SplashOverlayWindow.startObserving()
+		} else {
+			DispatchQueue.main.async {
+				SplashOverlayWindow.startObserving()
+			}
+		}
 		return true
 	}
 

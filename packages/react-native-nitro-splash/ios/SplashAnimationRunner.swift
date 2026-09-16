@@ -3,9 +3,7 @@ import UIKit
 /// Native-driven exit animations. Runs on main, no JS frames involved.
 enum SplashAnimationRunner {
   static func hide(animation: SplashAnimation, durationMs: Double) {
-    guard let overlay = SplashOverlayWindow.overlayWindow,
-      let container = SplashOverlayWindow.containerView
-    else {
+    guard let container = SplashOverlayWindow.containerView else {
       SplashOverlayWindow.removeImmediately()
       return
     }
@@ -45,6 +43,5 @@ enum SplashAnimationRunner {
         },
         completion: { _ in SplashOverlayWindow.removeImmediately() })
     }
-    overlay.isUserInteractionEnabled = false
   }
 }
