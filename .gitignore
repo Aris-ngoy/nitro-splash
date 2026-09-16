@@ -1,0 +1,15 @@
+node_modules/
+lib/
+dist/
+build/
+.nitro/
+nitrogen/
+.turbo/
+.expo/
+ios/build/
+ios/Pods/
+android/build/
+android/.gradle/
+android/app/build/
+*.log
+.DS_Store

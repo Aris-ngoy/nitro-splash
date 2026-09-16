@@ -1,0 +1,13 @@
+{
+	"expo": {
+		"name": "nitro-splash-example",
+		"slug": "nitro-splash-example",
+		"newArchEnabled": true,
+		"plugins": [
+			[
+				"react-native-nitro-splash",
+				{ "background": "#FFFFFF", "logoWidth": 120, "resizeMode": "contain" }
+			]
+		]
+	}
+}

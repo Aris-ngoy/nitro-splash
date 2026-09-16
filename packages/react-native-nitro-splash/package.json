@@ -1,0 +1,90 @@
+{
+	"name": "react-native-nitro-splash",
+	"version": "0.1.0",
+	"description": "Fast, memory-efficient splash screen with exit animations for React Native + Expo, powered by Nitro Modules. Supports PNG, JPG, WebP, SVG and Lottie.",
+	"main": "./src/index.ts",
+	"module": "./src/index.ts",
+	"types": "./src/index.ts",
+	"react-native": "./src/index.ts",
+	"source": "./src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./plugin": "./plugin/withNitroSplash.js",
+		"./cli": "./cli/generate.js"
+	},
+	"license": "MIT",
+	"author": "nitro-splash contributors",
+	"homepage": "https://github.com/example/nitro-splash#readme",
+	"bugs": "https://github.com/example/nitro-splash/issues",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/example/nitro-splash.git",
+		"directory": "packages/react-native-nitro-splash"
+	},
+	"keywords": [
+		"react-native",
+		"expo",
+		"splash-screen",
+		"nitro",
+		"lottie",
+		"bootsplash"
+	],
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check .",
+		"build": "bun run typecheck && bob build",
+		"codegen": "nitrogen",
+		"test": "bun ./scripts/smoke.js && bun test"
+	},
+	"files": [
+		"src",
+		"lib",
+		"ios",
+		"android",
+		"nitrogen",
+		"nitro.json",
+		"plugin",
+		"cli",
+		"app.plugin.js",
+		"*.podspec",
+		"README.md"
+	],
+	"devDependencies": {
+		"@types/react": "19.2.0",
+		"nitrogen": "^0.36.1",
+		"react": "19.2.3",
+		"react-native": "0.86.3",
+		"react-native-builder-bob": "^0.40.18",
+		"react-native-nitro-modules": "^0.36.1",
+		"typescript": "^5.6.3"
+	},
+	"peerDependencies": {
+		"expo": "*",
+		"lottie-react-native": "*",
+		"react": "*",
+		"react-native": "*",
+		"react-native-nitro-modules": "*"
+	},
+	"peerDependenciesMeta": {
+		"expo": {
+			"optional": true
+		},
+		"lottie-react-native": {
+			"optional": true
+		}
+	},
+	"react-native-builder-bob": {
+		"source": "src",
+		"output": "lib",
+		"targets": [
+			"commonjs",
+			"module",
+			[
+				"typescript",
+				{
+					"project": "tsconfig.json"
+				}
+			]
+		]
+	}
+}

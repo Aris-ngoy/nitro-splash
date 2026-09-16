@@ -1,0 +1,31 @@
+{
+	"name": "nitro-splash-monorepo",
+	"private": true,
+	"version": "0.0.0",
+	"packageManager": "bun@1.4.0",
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
+	"scripts": {
+		"build": "turbo run build",
+		"dev": "turbo run dev",
+		"typecheck": "turbo run typecheck",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"check": "biome check . && turbo run typecheck",
+		"codegen": "bun --filter react-native-nitro-splash codegen",
+		"test": "turbo run test",
+		"example": "bun --cwd apps/example"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.2.4",
+		"turbo": "^2.5.4",
+		"typescript": "^5.6.3"
+	},
+	"engines": {
+		"node": ">=20"
+	}
+}
