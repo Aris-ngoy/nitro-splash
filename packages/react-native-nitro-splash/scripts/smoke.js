@@ -7,6 +7,8 @@ const required = [
 	"src/specs/Splashscreen.nitro.ts",
 	"nitro.json",
 	"ios/HybridSplashscreen.swift",
+	"ios/NitroSplashLoader.m",
+	"ios/SplashOverlayWindow.swift",
 	"android/src/main/java/com/nitrosplash/HybridSplashscreen.kt",
 	"lib/commonjs/index.js",
 	"lib/module/index.js",

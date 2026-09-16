@@ -16,6 +16,25 @@ object SplashOverlayController {
 
   fun isVisible(): Boolean = overlay != null
 
+  fun showFromResources() {
+    val activity = CurrentActivityHolder.current()
+    val background = try {
+      if (activity == null) "#FFFFFF"
+      else {
+        val id = activity.resources.getIdentifier("nitrosplash_background", "color", activity.packageName)
+        if (id != 0) String.format("#%06X", 0xFFFFFF and activity.getColor(id)) else "#FFFFFF"
+      }
+    } catch (_: Throwable) {
+      "#FFFFFF"
+    }
+    show(
+      backgroundColor = background,
+      darkBackgroundColor = null,
+      resizeMode = SplashResizeMode.CONTAIN,
+      logoWidthDp = 120.0,
+    )
+  }
+
   fun show(
     backgroundColor: String,
     darkBackgroundColor: String?,

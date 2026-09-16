@@ -1,3 +1,4 @@
+import { registerRootComponent } from "expo";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { hideAsync, preventAutoHideAsync, SplashAnimation } from "react-native-nitro-splash";
@@ -9,7 +10,7 @@ export default function App() {
 
 	useEffect(() => {
 		async function prepare() {
-			await new Promise<void>((resolve) => setTimeout(resolve, 800));
+			await new Promise<void>((resolve) => setTimeout(resolve, 2000));
 			setReady(true);
 			await hideAsync({ animation: SplashAnimation.Fade, durationMs: 350 });
 		}
@@ -28,3 +29,5 @@ export default function App() {
 const styles = StyleSheet.create({
 	container: { flex: 1, alignItems: "center", justifyContent: "center" },
 });
+
+registerRootComponent(App);

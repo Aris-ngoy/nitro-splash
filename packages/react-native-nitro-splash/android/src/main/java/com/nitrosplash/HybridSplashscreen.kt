@@ -33,10 +33,11 @@ final class HybridSplashscreen : HybridSplashscreenSpec() {
 
   override fun isVisible(): Boolean = SplashOverlayController.isVisible()
 
-  override fun preventAutoHide(): Boolean {
-    SplashOverlayController.autoHidePrevented = true
-    return true
-  }
+	override fun preventAutoHide(): Boolean {
+		SplashOverlayController.autoHidePrevented = true
+		SplashOverlayController.showFromResources()
+		return true
+	}
 
   override fun setBackgroundColor(color: String) {
     SplashOverlayController.updateBackground(color)
