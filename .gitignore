@@ -3,7 +3,6 @@ lib/
 dist/
 build/
 .nitro/
-nitrogen/
 .turbo/
 .expo/
 ios/build/
