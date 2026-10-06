@@ -51,10 +51,17 @@ function frameForWidth(filePath, width) {
 	return { width, height: Math.round((width * size.height) / size.width) };
 }
 
+function drawnLogoFrame(filePath, width) {
+	const requested = frameForWidth(filePath, width);
+	const drawnWidth = Math.min(Math.max(requested.width, 48), 320);
+	const drawnHeight = requested.height * (drawnWidth / Math.max(requested.width, 1));
+	return { width: drawnWidth, height: drawnHeight };
+}
+
 function createManifest(options) {
 	const manifest = {
 		background: options.background,
-		logo: frameForWidth(options.logo, options.logoWidth),
+		logo: drawnLogoFrame(options.logo, options.logoWidth),
 	};
 	if (options.darkBackground) {
 		manifest.darkBackground = options.darkBackground;

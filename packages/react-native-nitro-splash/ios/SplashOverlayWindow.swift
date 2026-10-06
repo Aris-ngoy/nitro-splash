@@ -89,8 +89,6 @@ final class SplashOverlayWindow {
 		windowHint: UIWindow? = nil
 	) {
 		guard let hostWindow = hostWindow(hint: windowHint) else { return }
-		let targetWidth = min(max(logoWidthPt, 48.0), 320.0)
-		let targetHeight = logoHeightPt * (targetWidth / max(logoWidthPt, 1))
 		if let existing = containerView, existing.superview != nil {
 			updateBackground(hex: currentHex(light: backgroundHex, dark: darkBackgroundHex, window: hostWindow))
 			existing.superview?.bringSubviewToFront(existing)
@@ -112,8 +110,8 @@ final class SplashOverlayWindow {
 		container.isUserInteractionEnabled = false
 
 		let imageView = UIImageView()
-		let logoWidth = CGFloat(targetWidth)
-		let logoHeight = CGFloat(targetHeight)
+		let logoWidth = CGFloat(logoWidthPt)
+		let logoHeight = CGFloat(logoHeightPt)
 		imageView.frame = CGRect(
 			x: (frame.width - logoWidth) / 2,
 			y: (frame.height - logoHeight) / 2,
@@ -124,7 +122,7 @@ final class SplashOverlayWindow {
 		imageView.contentMode = resizeMode.toContentMode()
 		imageView.backgroundColor = .clear
 		imageView.tintColor = .white
-		if let image = SplashImageLoader.loadLogo(targetWidthPt: targetWidth, targetHeightPt: targetHeight) {
+		if let image = SplashImageLoader.loadLogo(targetWidthPt: logoWidthPt, targetHeightPt: logoHeightPt) {
 			imageView.image = image.withRenderingMode(.alwaysOriginal)
 		}
 		container.addSubview(imageView)

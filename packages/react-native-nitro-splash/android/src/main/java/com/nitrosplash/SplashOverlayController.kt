@@ -90,11 +90,8 @@ object SplashOverlayController {
           ),
         )
       } else {
-        val requestedWidth = logoWidthDp ?: 120.0
-        val requestedHeight = logoHeightDp ?: requestedWidth
-        val widthDp = requestedWidth.coerceIn(48.0, 320.0)
-        val heightDp =
-          if (requestedWidth <= 0.0) widthDp else requestedHeight * (widthDp / requestedWidth)
+        val widthDp = logoWidthDp ?: 120.0
+        val heightDp = logoHeightDp ?: widthDp
         val density = activity.resources.displayMetrics.density
         val image =
           ImageView(activity).apply {
