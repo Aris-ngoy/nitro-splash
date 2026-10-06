@@ -20,6 +20,8 @@ namespace margelo::nitro::nitrosplash { enum class SplashResizeMode; }
 namespace margelo::nitro::nitrosplash { struct HideOptions; }
 // Forward declaration of `SplashAnimation` to properly resolve imports.
 namespace margelo::nitro::nitrosplash { enum class SplashAnimation; }
+// Forward declaration of `HandoffMetrics` to properly resolve imports.
+namespace margelo::nitro::nitrosplash { struct HandoffMetrics; }
 
 #include "SplashOptions.hpp"
 #include <string>
@@ -28,6 +30,7 @@ namespace margelo::nitro::nitrosplash { enum class SplashAnimation; }
 #include <NitroModules/Promise.hpp>
 #include "HideOptions.hpp"
 #include "SplashAnimation.hpp"
+#include "HandoffMetrics.hpp"
 
 #include "Nitrosplash-Swift-Cxx-Umbrella.hpp"
 
@@ -114,6 +117,14 @@ namespace margelo::nitro::nitrosplash {
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }
+    }
+    inline HandoffMetrics handoffMetrics() override {
+      auto __result = _swiftPart.handoffMetrics();
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
     }
 
   private:

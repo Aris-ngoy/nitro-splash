@@ -29,10 +29,22 @@ data class SplashOptions(
   val logoWidth: Double?,
   @DoNotStrip
   @Keep
+  val logoHeight: Double?,
+  @DoNotStrip
+  @Keep
   val darkBackgroundColor: String?,
   @DoNotStrip
   @Keep
-  val statusBarHidden: Boolean?
+  val statusBarHidden: Boolean?,
+  @DoNotStrip
+  @Keep
+  val brandWidth: Double?,
+  @DoNotStrip
+  @Keep
+  val brandHeight: Double?,
+  @DoNotStrip
+  @Keep
+  val brandBottom: Double?
 ) {
   /* primary constructor */
 
@@ -42,8 +54,12 @@ data class SplashOptions(
     return Objects.deepEquals(this.backgroundColor, other.backgroundColor)
       && Objects.deepEquals(this.resizeMode, other.resizeMode)
       && Objects.deepEquals(this.logoWidth, other.logoWidth)
+      && Objects.deepEquals(this.logoHeight, other.logoHeight)
       && Objects.deepEquals(this.darkBackgroundColor, other.darkBackgroundColor)
       && Objects.deepEquals(this.statusBarHidden, other.statusBarHidden)
+      && Objects.deepEquals(this.brandWidth, other.brandWidth)
+      && Objects.deepEquals(this.brandHeight, other.brandHeight)
+      && Objects.deepEquals(this.brandBottom, other.brandBottom)
   }
 
   override fun hashCode(): Int {
@@ -51,8 +67,12 @@ data class SplashOptions(
       backgroundColor,
       resizeMode,
       logoWidth,
+      logoHeight,
       darkBackgroundColor,
-      statusBarHidden
+      statusBarHidden,
+      brandWidth,
+      brandHeight,
+      brandBottom
     ).contentDeepHashCode()
   }
 
@@ -64,8 +84,8 @@ data class SplashOptions(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(backgroundColor: String, resizeMode: SplashResizeMode, logoWidth: Double?, darkBackgroundColor: String?, statusBarHidden: Boolean?): SplashOptions {
-      return SplashOptions(backgroundColor, resizeMode, logoWidth, darkBackgroundColor, statusBarHidden)
+    private fun fromCpp(backgroundColor: String, resizeMode: SplashResizeMode, logoWidth: Double?, logoHeight: Double?, darkBackgroundColor: String?, statusBarHidden: Boolean?, brandWidth: Double?, brandHeight: Double?, brandBottom: Double?): SplashOptions {
+      return SplashOptions(backgroundColor, resizeMode, logoWidth, logoHeight, darkBackgroundColor, statusBarHidden, brandWidth, brandHeight, brandBottom)
     }
   }
 }

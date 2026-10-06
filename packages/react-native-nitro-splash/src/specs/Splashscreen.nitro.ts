@@ -20,13 +20,23 @@ export interface SplashOptions {
 	backgroundColor: string;
 	resizeMode: SplashResizeMode;
 	logoWidth?: number;
+	logoHeight?: number;
 	darkBackgroundColor?: string;
 	statusBarHidden?: boolean;
+	brandWidth?: number;
+	brandHeight?: number;
+	brandBottom?: number;
 }
 
 export interface HideOptions {
 	animation?: SplashAnimation;
 	durationMs?: number;
+}
+
+export interface HandoffMetrics {
+	darkMode: boolean;
+	statusBarHeight: number;
+	navigationBarHeight: number;
 }
 
 /**
@@ -47,4 +57,5 @@ export interface Splashscreen extends HybridObject<{ ios: "swift"; android: "kot
 	isVisible(): boolean;
 	preventAutoHide(): boolean;
 	setBackgroundColor(color: string): void;
+	handoffMetrics(): HandoffMetrics;
 }

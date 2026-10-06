@@ -59,6 +59,7 @@ namespace margelo::nitro::nitrosplash {
     bool isVisible() override;
     bool preventAutoHide() override;
     void setBackgroundColor(const std::string& color) override;
+    HandoffMetrics handoffMetrics() override;
 
   private:
     jni::global_ref<JHybridSplashscreenSpec::JavaPart> _javaPart;

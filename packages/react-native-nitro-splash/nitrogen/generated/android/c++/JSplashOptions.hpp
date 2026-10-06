@@ -40,16 +40,28 @@ namespace margelo::nitro::nitrosplash {
       jni::local_ref<JSplashResizeMode> resizeMode = this->getFieldValue(fieldResizeMode);
       static const auto fieldLogoWidth = clazz->getField<jni::JDouble>("logoWidth");
       jni::local_ref<jni::JDouble> logoWidth = this->getFieldValue(fieldLogoWidth);
+      static const auto fieldLogoHeight = clazz->getField<jni::JDouble>("logoHeight");
+      jni::local_ref<jni::JDouble> logoHeight = this->getFieldValue(fieldLogoHeight);
       static const auto fieldDarkBackgroundColor = clazz->getField<jni::JString>("darkBackgroundColor");
       jni::local_ref<jni::JString> darkBackgroundColor = this->getFieldValue(fieldDarkBackgroundColor);
       static const auto fieldStatusBarHidden = clazz->getField<jni::JBoolean>("statusBarHidden");
       jni::local_ref<jni::JBoolean> statusBarHidden = this->getFieldValue(fieldStatusBarHidden);
+      static const auto fieldBrandWidth = clazz->getField<jni::JDouble>("brandWidth");
+      jni::local_ref<jni::JDouble> brandWidth = this->getFieldValue(fieldBrandWidth);
+      static const auto fieldBrandHeight = clazz->getField<jni::JDouble>("brandHeight");
+      jni::local_ref<jni::JDouble> brandHeight = this->getFieldValue(fieldBrandHeight);
+      static const auto fieldBrandBottom = clazz->getField<jni::JDouble>("brandBottom");
+      jni::local_ref<jni::JDouble> brandBottom = this->getFieldValue(fieldBrandBottom);
       return SplashOptions(
         backgroundColor->toStdString(),
         resizeMode->toCpp(),
         logoWidth != nullptr ? std::make_optional(logoWidth->value()) : std::nullopt,
+        logoHeight != nullptr ? std::make_optional(logoHeight->value()) : std::nullopt,
         darkBackgroundColor != nullptr ? std::make_optional(darkBackgroundColor->toStdString()) : std::nullopt,
-        statusBarHidden != nullptr ? std::make_optional(static_cast<bool>(statusBarHidden->value())) : std::nullopt
+        statusBarHidden != nullptr ? std::make_optional(static_cast<bool>(statusBarHidden->value())) : std::nullopt,
+        brandWidth != nullptr ? std::make_optional(brandWidth->value()) : std::nullopt,
+        brandHeight != nullptr ? std::make_optional(brandHeight->value()) : std::nullopt,
+        brandBottom != nullptr ? std::make_optional(brandBottom->value()) : std::nullopt
       );
     }
 
@@ -59,7 +71,7 @@ namespace margelo::nitro::nitrosplash {
      */
     [[maybe_unused]]
     static jni::local_ref<JSplashOptions::javaobject> fromCpp(const SplashOptions& value) {
-      using JSignature = JSplashOptions(jni::alias_ref<jni::JString>, jni::alias_ref<JSplashResizeMode>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JBoolean>);
+      using JSignature = JSplashOptions(jni::alias_ref<jni::JString>, jni::alias_ref<JSplashResizeMode>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JDouble>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -67,8 +79,12 @@ namespace margelo::nitro::nitrosplash {
         jni::make_jstring(value.backgroundColor),
         JSplashResizeMode::fromCpp(value.resizeMode),
         value.logoWidth.has_value() ? jni::JDouble::valueOf(value.logoWidth.value()) : nullptr,
+        value.logoHeight.has_value() ? jni::JDouble::valueOf(value.logoHeight.value()) : nullptr,
         value.darkBackgroundColor.has_value() ? jni::make_jstring(value.darkBackgroundColor.value()) : nullptr,
-        value.statusBarHidden.has_value() ? jni::JBoolean::valueOf(value.statusBarHidden.value()) : nullptr
+        value.statusBarHidden.has_value() ? jni::JBoolean::valueOf(value.statusBarHidden.value()) : nullptr,
+        value.brandWidth.has_value() ? jni::JDouble::valueOf(value.brandWidth.value()) : nullptr,
+        value.brandHeight.has_value() ? jni::JDouble::valueOf(value.brandHeight.value()) : nullptr,
+        value.brandBottom.has_value() ? jni::JDouble::valueOf(value.brandBottom.value()) : nullptr
       );
     }
   };

@@ -18,9 +18,15 @@ public extension SplashOptions {
   /**
    * Create a new instance of `SplashOptions`.
    */
-  init(backgroundColor: String, resizeMode: SplashResizeMode, logoWidth: Double?, darkBackgroundColor: String?, statusBarHidden: Bool?) {
+  init(backgroundColor: String, resizeMode: SplashResizeMode, logoWidth: Double?, logoHeight: Double?, darkBackgroundColor: String?, statusBarHidden: Bool?, brandWidth: Double?, brandHeight: Double?, brandBottom: Double?) {
     self.init(std.string(backgroundColor), resizeMode, { () -> bridge.std__optional_double_ in
       if let __unwrappedValue = logoWidth {
+        return bridge.create_std__optional_double_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_double_ in
+      if let __unwrappedValue = logoHeight {
         return bridge.create_std__optional_double_(__unwrappedValue)
       } else {
         return .init()
@@ -34,6 +40,24 @@ public extension SplashOptions {
     }(), { () -> bridge.std__optional_bool_ in
       if let __unwrappedValue = statusBarHidden {
         return bridge.create_std__optional_bool_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_double_ in
+      if let __unwrappedValue = brandWidth {
+        return bridge.create_std__optional_double_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_double_ in
+      if let __unwrappedValue = brandHeight {
+        return bridge.create_std__optional_double_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_double_ in
+      if let __unwrappedValue = brandBottom {
+        return bridge.create_std__optional_double_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -63,6 +87,18 @@ public extension SplashOptions {
   }
   
   @inline(__always)
+  var logoHeight: Double? {
+    return { () -> Double? in
+      if bridge.has_value_std__optional_double_(self.__logoHeight) {
+        let __unwrapped = bridge.get_std__optional_double_(self.__logoHeight)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
   var darkBackgroundColor: String? {
     return { () -> String? in
       if bridge.has_value_std__optional_std__string_(self.__darkBackgroundColor) {
@@ -79,6 +115,42 @@ public extension SplashOptions {
     return { () -> Bool? in
       if bridge.has_value_std__optional_bool_(self.__statusBarHidden) {
         let __unwrapped = bridge.get_std__optional_bool_(self.__statusBarHidden)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var brandWidth: Double? {
+    return { () -> Double? in
+      if bridge.has_value_std__optional_double_(self.__brandWidth) {
+        let __unwrapped = bridge.get_std__optional_double_(self.__brandWidth)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var brandHeight: Double? {
+    return { () -> Double? in
+      if bridge.has_value_std__optional_double_(self.__brandHeight) {
+        let __unwrapped = bridge.get_std__optional_double_(self.__brandHeight)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var brandBottom: Double? {
+    return { () -> Double? in
+      if bridge.has_value_std__optional_double_(self.__brandBottom) {
+        let __unwrapped = bridge.get_std__optional_double_(self.__brandBottom)
         return __unwrapped
       } else {
         return nil
