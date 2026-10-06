@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { withAndroidStyles, withDangerousMod, withInfoPlist } = require("@expo/config-plugins");
-const { frameForWidth } = require("../cli/imageFrame");
+const { createManifest, frameForWidth } = require("../cli/imageFrame");
 
 function hexToColor(color) {
 	if (!color) return "#FFFFFF";
@@ -196,12 +196,27 @@ function withNitroSplash(config, options = {}) {
 
 function pictureFrames(projectRoot, options) {
 	const logoWidth = options.logoWidth ?? 120;
-	const logo = resolveFrame(projectRoot, options.logo, logoWidth) ?? {
-		abs: null,
-		frame: { width: logoWidth, height: logoWidth },
-	};
+	const logo = resolveFrame(projectRoot, options.logo, logoWidth);
 	const brand = resolveFrame(projectRoot, options.brand, options.brandWidth ?? logoWidth);
-	return { logo, brand, brandBottom: options.brandBottom ?? 48 };
+	const manifest = createManifest({
+		background: options.background,
+		logo: logo?.abs,
+		logoWidth,
+		brand: brand?.abs,
+		brandWidth: options.brandWidth,
+		brandBottom: options.brandBottom,
+	});
+	return {
+		logo: { abs: logo?.abs ?? null, frame: manifest.logo },
+		brand:
+			brand && manifest.brand
+				? {
+						abs: brand.abs,
+						frame: { width: manifest.brand.width, height: manifest.brand.height },
+					}
+				: null,
+		brandBottom: manifest.brand?.bottom ?? options.brandBottom ?? 48,
+	};
 }
 
 function withAndroidDrawables(config, options) {

@@ -53,4 +53,38 @@ describe("manifest", () => {
 			rmSync(dir, { recursive: true, force: true });
 		}
 	});
+
+	test("draws a logo requested wider than 320 at 320, with the height rescaled", () => {
+		const dir = mkdtempSync(join(tmpdir(), "nitrosplash-"));
+		try {
+			const logo = join(dir, "logo.png");
+			writeFileSync(logo, png(200, 100));
+			expect(
+				createManifest({
+					logo,
+					logoWidth: 400,
+					background: "#FFFFFF",
+				}).logo,
+			).toEqual({ width: 320, height: 160 });
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
+
+	test("draws a logo requested narrower than 48 at 48, with the height rescaled", () => {
+		const dir = mkdtempSync(join(tmpdir(), "nitrosplash-"));
+		try {
+			const logo = join(dir, "logo.png");
+			writeFileSync(logo, png(200, 100));
+			expect(
+				createManifest({
+					logo,
+					logoWidth: 24,
+					background: "#FFFFFF",
+				}).logo,
+			).toEqual({ width: 48, height: 24 });
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
 });
