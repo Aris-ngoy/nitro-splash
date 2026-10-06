@@ -1,0 +1,37 @@
+---
+title: "nitro-splash"
+description: "A React Native splash that shares one picture from the launch screen through your own exit animation."
+keywords: ["splash", "react native", "expo", "bootsplash"]
+---
+
+nitro-splash covers the first frame of a React Native app, then gets out of the way.
+
+The operating system launch screen, the native overlay, and a JavaScript replica all draw the same picture. That picture is the manifest: a background, an optional dark background, a logo frame, and an optional brand. When the replica is on screen, the overlay is removed with no animation. Your app then runs the exit, from a fade to a custom reveal.
+
+<Columns cols={2}>
+  <Card title="Quickstart" icon="zap" href="/quickstart">
+    Add the Expo plugin and hide the splash when the app is ready.
+  </Card>
+  <Card title="Animated handoff" icon="sparkles" href="/handoff">
+    Match the overlay, then scale a circular mask open over your UI.
+  </Card>
+  <Card title="Manifest" icon="image" href="/manifest">
+    One logo frame for the launch screen, the overlay, and JavaScript.
+  </Card>
+  <Card title="Bare React Native" icon="smartphone" href="/bare">
+    Write the same picture into the iOS and Android projects yourself.
+  </Card>
+</Columns>
+
+## What you get
+
+- An Expo config plugin that writes the launch screen. You do not edit the storyboard or `styles.xml` for the common path.
+- `preventAutoHideAsync` and `hideAsync`, the same shape as `expo-splash-screen`.
+- A shared manifest frame, so the logo does not jump when the overlay replaces the launch screen.
+- `useHandoff`, which removes the overlay with no animation and then runs the animation you pass in.
+
+Brand, dark background, and the logo frame do not require a license key. Dark mode changes the background color only. There is no separate dark logo.
+
+<Note>
+  The library is native code on top of [Nitro Modules](https://github.com/mrousavy/nitro). Install `react-native-nitro-modules` with it.
+</Note>

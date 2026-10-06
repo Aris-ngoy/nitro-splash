@@ -1,0 +1,38 @@
+{
+	"$schema": "https://mintlify.com/docs.json",
+	"theme": "mint",
+	"name": "nitro-splash",
+	"description": "Splash screens for React Native and Expo. One picture from launch through your own exit animation.",
+	"colors": {
+		"primary": "#6D4AFF",
+		"light": "#6D4AFF",
+		"dark": "#A78BFA"
+	},
+	"navbar": {
+		"links": [
+			{
+				"label": "GitHub",
+				"href": "https://github.com/Aris-ngoy/nitro-splash"
+			}
+		]
+	},
+	"navigation": {
+		"groups": [
+			{
+				"group": "Getting started",
+				"icon": "rocket",
+				"pages": ["index", "quickstart", "installation"]
+			},
+			{
+				"group": "Guides",
+				"icon": "book-open",
+				"pages": ["configuration", "manifest", "hide", "handoff", "bare"]
+			},
+			{
+				"group": "API",
+				"icon": "code",
+				"pages": ["api/splash", "api/hooks"]
+			}
+		]
+	}
+}

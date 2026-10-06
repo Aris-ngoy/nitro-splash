@@ -46,7 +46,20 @@ function writeImageset(imagesetDir, logoAbs) {
 	);
 }
 
-function patchStoryboard(storyboardPath, background) {
+function constraintTag(itemId, attribute, constant, id) {
+	return `<constraint firstItem="${itemId}" firstAttribute="${attribute}" constant="${constant}" id="${id}"/>`;
+}
+
+function upsertConstraint(xml, itemId, attribute, constant, id) {
+	const tag = constraintTag(itemId, attribute, constant, id);
+	const pattern = new RegExp(
+		`<constraint firstItem="${itemId}" firstAttribute="${attribute}" constant="[^"]*" id="${id}"/>`,
+	);
+	if (pattern.test(xml)) return xml.replace(pattern, tag);
+	return xml.replace(/([ \t]*)<\/constraints>/, `$1    ${tag}\n$1</constraints>`);
+}
+
+function patchStoryboard(storyboardPath, background, logo) {
 	if (!fs.existsSync(storyboardPath)) return;
 	let xml = fs.readFileSync(storyboardPath, "utf8");
 	const { r, g, b } = hexToStoryboardColor(background);
@@ -54,6 +67,24 @@ function patchStoryboard(storyboardPath, background) {
 	xml = xml.replace(/<color key="backgroundColor"[^/]*\/>/, colorTag);
 	xml = xml.replace(/<color key="backgroundColor"[\s\S]*?<\/color>/, colorTag);
 	xml = xml.replace('image="SplashScreenLogo"', 'image="SplashScreen"');
+	if (logo) {
+		const width = logo.width;
+		const height = logo.height;
+		xml = xml.replace(
+			/(id="EXPO-SplashScreen"[\s\S]*?<rect key="frame"[^>]*?width=")[^"]*(" height=")[^"]*(")/,
+			`$1${width}$2${height}$3`,
+		);
+		xml = upsertConstraint(xml, "EXPO-SplashScreen", "width", width, "nitro-splash-logo-width");
+		xml = upsertConstraint(xml, "EXPO-SplashScreen", "height", height, "nitro-splash-logo-height");
+		const imageTag = `<image name="SplashScreen" width="${width}" height="${height}"/>`;
+		if (/<image name="SplashScreen"/.test(xml)) {
+			xml = xml.replace(/<image name="SplashScreen" width="[^"]*" height="[^"]*"\/>/, imageTag);
+		} else if (/<image name="SplashScreenLogo"/.test(xml)) {
+			xml = xml.replace(/<image name="SplashScreenLogo" width="[^"]*" height="[^"]*"\/>/, imageTag);
+		} else {
+			xml = xml.replace("</resources>", `        ${imageTag}\n    </resources>`);
+		}
+	}
 	fs.writeFileSync(storyboardPath, xml);
 }
 
@@ -80,6 +111,12 @@ function withIosSplashAssets(config, options) {
 			const projectRoot = mod.modRequest.projectRoot;
 			const iosRoot = mod.modRequest.platformProjectRoot;
 			const background = hexToColor(options.background ?? "#FFFFFF");
+			const logoWidth = options.logoWidth ?? 120;
+			const manifest = createManifest({
+				background,
+				logo: options.logo ? path.resolve(projectRoot, options.logo) : undefined,
+				logoWidth,
+			});
 			const logoRel = options.logo;
 			if (logoRel) {
 				const logoAbs = path.resolve(projectRoot, logoRel);
@@ -113,7 +150,7 @@ function withIosSplashAssets(config, options) {
 			for (const entry of fs.readdirSync(iosRoot)) {
 				const storyboard = path.join(iosRoot, entry, "SplashScreen.storyboard");
 				if (fs.existsSync(storyboard)) {
-					patchStoryboard(storyboard, background);
+					patchStoryboard(storyboard, background, manifest.logo);
 				}
 			}
 			return mod;

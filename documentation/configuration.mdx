@@ -1,0 +1,54 @@
+---
+title: "Configuration"
+description: "Plugin options for the background, logo frame, brand, and resize mode."
+keywords: ["plugin", "app.json", "logoWidth", "brand", "dark background"]
+---
+
+The Expo plugin reads the same options the overlay uses at launch. Set them in `app.json`.
+
+```json app.json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-nitro-splash",
+        {
+          "background": "#0B1220",
+          "darkBackground": "#000000",
+          "logo": "./assets/logo.png",
+          "logoWidth": 120,
+          "brand": "./assets/brand.png",
+          "brandWidth": 100,
+          "brandBottom": 48,
+          "resizeMode": "contain",
+          "statusBarHidden": false
+        }
+      ]
+    ]
+  }
+}
+```
+
+| Option | Default | What it does |
+| --- | --- | --- |
+| `background` | `#FFFFFF` | Launch screen and overlay background. |
+| `darkBackground` | none | Background when the device is in dark mode. The logo image does not change. |
+| `logo` | none | PNG or JPEG drawn in the center. |
+| `logoWidth` | `120` | Requested logo width, in points on iOS and dp on Android. Height follows the image aspect ratio. |
+| `brand` | none | Optional image along the bottom. |
+| `brandWidth` | `logoWidth` | Requested brand width. Height follows the image aspect ratio. |
+| `brandBottom` | `48` | Distance from the bottom of the screen to the brand. |
+| `resizeMode` | `contain` | How iOS draws the logo: `contain`, `cover`, or `native`. |
+| `statusBarHidden` | `false` | Hides the iOS status bar during launch when `true`. |
+
+## Logo frame
+
+The logo is not drawn at an arbitrary width. The manifest clamps the requested width into the range 48 to 320, then scales the height so the aspect ratio stays the same.
+
+A 200 by 100 image requested at width 400 becomes 320 by 160. The same image requested at width 24 becomes 48 by 24. A request that is already inside the range, such as 120 on a square logo, stays 120 by 120.
+
+The brand image is not clamped.
+
+<Warning>
+  After you change these options, run prebuild again. The launch storyboard and the native size keys are generated files.
+</Warning>

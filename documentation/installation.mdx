@@ -1,0 +1,35 @@
+---
+title: "Installation"
+description: "Install nitro-splash in an Expo app or a bare React Native app."
+keywords: ["install", "expo", "bare", "nitro modules"]
+---
+
+nitro-splash needs React Native and [Nitro Modules](https://github.com/mrousavy/nitro). Expo is optional.
+
+<Tabs>
+  <Tab title="Expo">
+    ```bash
+    npx expo install react-native-nitro-splash react-native-nitro-modules
+    ```
+
+    Add the config plugin, then prebuild. See the [quickstart](/quickstart).
+  </Tab>
+  <Tab title="Bare React Native">
+    ```bash
+    npm install react-native-nitro-splash react-native-nitro-modules
+    cd ios && pod install
+    ```
+
+    Autolinking picks up the iOS podspec and the Android package. You still write the launch picture yourself. See [Bare React Native](/bare).
+  </Tab>
+</Tabs>
+
+## Requirements
+
+- React Native with the new architecture, the same generation this library is developed against (0.86).
+- `react-native-nitro-modules` 0.36 or newer.
+- A PNG or JPEG logo. The manifest reader measures those two formats.
+
+<Info>
+  Lottie can replace the logo inside the native overlay when `lottie-react-native` is installed. The JavaScript replica is a static image, so a Lottie overlay will not match the handoff frame. Use a still logo when you use `useHandoff`.
+</Info>
