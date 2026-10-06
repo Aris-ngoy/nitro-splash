@@ -19,6 +19,7 @@ namespace margelo::nitro::nitrosplash {
       prototype.registerHybridMethod("isVisible", &HybridSplashscreenSpec::isVisible);
       prototype.registerHybridMethod("preventAutoHide", &HybridSplashscreenSpec::preventAutoHide);
       prototype.registerHybridMethod("setBackgroundColor", &HybridSplashscreenSpec::setBackgroundColor);
+      prototype.registerHybridMethod("handoffMetrics", &HybridSplashscreenSpec::handoffMetrics);
     });
   }
 

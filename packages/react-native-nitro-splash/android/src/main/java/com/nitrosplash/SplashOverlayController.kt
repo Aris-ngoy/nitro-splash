@@ -1,5 +1,8 @@
 package com.nitrosplash
 
+import android.app.Activity
+import android.content.res.Configuration
+import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -10,6 +13,7 @@ object SplashOverlayController {
   @Volatile
   private var overlay: FrameLayout? = null
   private var logoView: ImageView? = null
+  private var brandView: ImageView? = null
   private var lottieView: android.view.View? = null
   @Volatile
   var autoHidePrevented: Boolean = false
@@ -27,11 +31,17 @@ object SplashOverlayController {
     } catch (_: Throwable) {
       "#FFFFFF"
     }
+    val logoWidth = readNumber(activity, "nitrosplash_logo_width") ?: 120.0
+    val logoHeight = readNumber(activity, "nitrosplash_logo_height") ?: logoWidth
     show(
       backgroundColor = background,
-      darkBackgroundColor = null,
+      darkBackgroundColor = readColor(activity, "nitrosplash_dark_background"),
       resizeMode = SplashResizeMode.CONTAIN,
-      logoWidthDp = 120.0,
+      logoWidthDp = logoWidth,
+      logoHeightDp = logoHeight,
+      brandWidthDp = readNumber(activity, "nitrosplash_brand_width"),
+      brandHeightDp = readNumber(activity, "nitrosplash_brand_height"),
+      brandBottomDp = readNumber(activity, "nitrosplash_brand_bottom"),
     )
   }
 
@@ -40,11 +50,20 @@ object SplashOverlayController {
     darkBackgroundColor: String?,
     resizeMode: SplashResizeMode,
     logoWidthDp: Double?,
+    logoHeightDp: Double?,
+    brandWidthDp: Double?,
+    brandHeightDp: Double?,
+    brandBottomDp: Double?,
   ) {
     UiThreadUtil.runOnUiThread {
       val activity = CurrentActivityHolder.current() ?: return@runOnUiThread
+      val night =
+        activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+          Configuration.UI_MODE_NIGHT_YES
+      val resolved =
+        if (night && darkBackgroundColor != null) darkBackgroundColor else backgroundColor
       if (overlay != null) {
-        updateBackground(backgroundColor)
+        updateBackground(resolved)
         return@runOnUiThread
       }
       val root = activity.window.decorView as? ViewGroup ?: return@runOnUiThread
@@ -54,7 +73,7 @@ object SplashOverlayController {
             FrameLayout.LayoutParams.MATCH_PARENT,
             FrameLayout.LayoutParams.MATCH_PARENT,
           )
-        setBackgroundColor(SplashColors.parse(backgroundColor))
+        setBackgroundColor(SplashColors.parse(resolved))
         isClickable = false
         isFocusable = false
       }
@@ -71,21 +90,44 @@ object SplashOverlayController {
           ),
         )
       } else {
-        val targetDp = (logoWidthDp ?: 120.0).toInt().coerceIn(48, 320)
+        val requestedWidth = logoWidthDp ?: 120.0
+        val requestedHeight = logoHeightDp ?: requestedWidth
+        val widthDp = requestedWidth.coerceIn(48.0, 320.0)
+        val heightDp =
+          if (requestedWidth <= 0.0) widthDp else requestedHeight * (widthDp / requestedWidth)
+        val density = activity.resources.displayMetrics.density
         val image =
           ImageView(activity).apply {
             scaleType = resizeMode.toScaleType()
-            adjustViewBounds = true
-            setImageBitmap(SplashBitmapLoader.loadLogo(activity, targetWidthDp = targetDp))
+            setImageBitmap(
+              SplashBitmapLoader.loadLogo(activity, widthDp.toInt(), heightDp.toInt()),
+            )
           }
         logoView = image
         frame.addView(
           image,
-          FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT,
-          ),
+          FrameLayout.LayoutParams(px(widthDp, density), px(heightDp, density)).apply {
+            gravity = Gravity.CENTER
+          },
         )
+        if (brandWidthDp != null && brandHeightDp != null && brandBottomDp != null) {
+          val bitmap = SplashBitmapLoader.loadBrand(activity, brandWidthDp.toInt(), brandHeightDp.toInt())
+          if (bitmap != null) {
+            val brand =
+              ImageView(activity).apply {
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                setImageBitmap(bitmap)
+              }
+            brandView = brand
+            frame.addView(
+              brand,
+              FrameLayout.LayoutParams(px(brandWidthDp, density), px(brandHeightDp, density)).apply {
+                gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+                bottomMargin = px(brandBottomDp, density)
+              },
+            )
+          }
+        }
       }
 
       root.addView(frame)
@@ -105,12 +147,35 @@ object SplashOverlayController {
       SplashLottieLoader.cancel(lottieView)
       (frame.parent as? ViewGroup)?.removeView(frame)
       SplashBitmapLoader.recycle(logoView?.drawable)
+      SplashBitmapLoader.recycle(brandView?.drawable)
       logoView?.setImageDrawable(null)
+      brandView?.setImageDrawable(null)
       logoView = null
+      brandView = null
       lottieView = null
       overlay = null
     }
   }
 
   fun overlayView(): FrameLayout? = overlay
+
+  private fun px(dp: Double, density: Float): Int = (dp * density).toInt().coerceAtLeast(1)
+
+  private fun readNumber(activity: Activity?, name: String): Double? {
+    if (activity == null) return null
+    val id = activity.resources.getIdentifier(name, "string", activity.packageName)
+    if (id == 0) return null
+    return activity.getString(id).toDoubleOrNull()
+  }
+
+  private fun readColor(activity: Activity?, name: String): String? {
+    if (activity == null) return null
+    val id = activity.resources.getIdentifier(name, "color", activity.packageName)
+    if (id == 0) return null
+    return try {
+      String.format("#%06X", 0xFFFFFF and activity.getColor(id))
+    } catch (_: Throwable) {
+      null
+    }
+  }
 }

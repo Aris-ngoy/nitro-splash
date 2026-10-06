@@ -17,12 +17,15 @@
 namespace margelo::nitro::nitrosplash { struct SplashOptions; }
 // Forward declaration of `HideOptions` to properly resolve imports.
 namespace margelo::nitro::nitrosplash { struct HideOptions; }
+// Forward declaration of `HandoffMetrics` to properly resolve imports.
+namespace margelo::nitro::nitrosplash { struct HandoffMetrics; }
 
 #include "SplashOptions.hpp"
 #include <NitroModules/Promise.hpp>
 #include "HideOptions.hpp"
 #include <optional>
 #include <string>
+#include "HandoffMetrics.hpp"
 
 namespace margelo::nitro::nitrosplash {
 
@@ -60,6 +63,7 @@ namespace margelo::nitro::nitrosplash {
       virtual bool isVisible() = 0;
       virtual bool preventAutoHide() = 0;
       virtual void setBackgroundColor(const std::string& color) = 0;
+      virtual HandoffMetrics handoffMetrics() = 0;
 
     protected:
       // Hybrid Setup

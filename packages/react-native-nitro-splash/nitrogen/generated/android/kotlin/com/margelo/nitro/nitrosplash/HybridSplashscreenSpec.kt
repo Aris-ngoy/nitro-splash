@@ -49,6 +49,10 @@ abstract class HybridSplashscreenSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun setBackgroundColor(color: String): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun handoffMetrics(): HandoffMetrics
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { withAndroidStyles, withDangerousMod, withInfoPlist } = require("@expo/config-plugins");
+const { frameForWidth } = require("../cli/imageFrame");
 
 function hexToColor(color) {
 	if (!color) return "#FFFFFF";
@@ -56,6 +57,22 @@ function patchStoryboard(storyboardPath, background) {
 	fs.writeFileSync(storyboardPath, xml);
 }
 
+function resolveFrame(projectRoot, file, width) {
+	if (!file) return null;
+	const abs = path.resolve(projectRoot, file);
+	if (!fs.existsSync(abs)) return null;
+	return { abs, frame: frameForWidth(abs, width) };
+}
+
+function upsertNamed(list, name, value) {
+	const found = list.find((item) => item.$?.name === name);
+	if (found) {
+		found._ = String(value);
+		return;
+	}
+	list.push({ $: { name }, _: String(value) });
+}
+
 function withIosSplashAssets(config, options) {
 	return withDangerousMod(config, [
 		"ios",
@@ -78,6 +95,21 @@ function withIosSplashAssets(config, options) {
 					}
 				}
 			}
+			const brand = resolveFrame(
+				projectRoot,
+				options.brand,
+				options.brandWidth ?? options.logoWidth ?? 120,
+			);
+			if (brand) {
+				const assetsDirs = [];
+				for (const entry of fs.readdirSync(iosRoot)) {
+					const candidate = path.join(iosRoot, entry, "Images.xcassets");
+					if (fs.existsSync(candidate)) assetsDirs.push(candidate);
+				}
+				for (const assets of assetsDirs) {
+					writeImageset(path.join(assets, "SplashScreenBrand.imageset"), brand.abs);
+				}
+			}
 			for (const entry of fs.readdirSync(iosRoot)) {
 				const storyboard = path.join(iosRoot, entry, "SplashScreen.storyboard");
 				if (fs.existsSync(storyboard)) {
@@ -97,7 +129,6 @@ function withIosSplashAssets(config, options) {
 function withNitroSplash(config, options = {}) {
 	const background = hexToColor(options.background ?? "#FFFFFF");
 	const resizeMode = options.resizeMode ?? "contain";
-	const logoWidth = options.logoWidth ?? 120;
 
 	config.splash = {
 		...(config.splash ?? {}),
@@ -108,6 +139,7 @@ function withNitroSplash(config, options = {}) {
 
 	config = withAndroidStyles(config, (mod) => {
 		const styles = mod.modResults;
+		const { logo, brand, brandBottom } = pictureFrames(mod.modRequest.projectRoot, options);
 		const appTheme = styles?.resources?.style?.find((s) => s.$?.name === "AppTheme");
 		if (appTheme) {
 			appTheme.item = appTheme.item || [];
@@ -117,31 +149,95 @@ function withNitroSplash(config, options = {}) {
 		}
 		styles.resources = styles.resources || {};
 		styles.resources.color = styles.resources.color || [];
-		if (!styles.resources.color.some((c) => c.$?.name === "nitrosplash_background")) {
-			styles.resources.color.push({ $: { name: "nitrosplash_background" }, _: background });
+		upsertNamed(styles.resources.color, "nitrosplash_background", background);
+		if (options.darkBackground) {
+			upsertNamed(
+				styles.resources.color,
+				"nitrosplash_dark_background",
+				hexToColor(options.darkBackground),
+			);
 		}
 		styles.resources.string = styles.resources.string || [];
-		if (!styles.resources.string.some((s) => s.$?.name === "nitrosplash_resize_mode")) {
-			styles.resources.string.push({ $: { name: "nitrosplash_resize_mode" }, _: resizeMode });
+		upsertNamed(styles.resources.string, "nitrosplash_resize_mode", resizeMode);
+		upsertNamed(styles.resources.string, "nitrosplash_logo_width", logo.frame.width);
+		upsertNamed(styles.resources.string, "nitrosplash_logo_height", logo.frame.height);
+		if (brand) {
+			upsertNamed(styles.resources.string, "nitrosplash_brand_width", brand.frame.width);
+			upsertNamed(styles.resources.string, "nitrosplash_brand_height", brand.frame.height);
+			upsertNamed(styles.resources.string, "nitrosplash_brand_bottom", brandBottom);
 		}
 		return mod;
 	});
 
 	config = withInfoPlist(config, (mod) => {
-		mod.modResults["NitroSplashBackground"] = background;
-		mod.modResults["NitroSplashResizeMode"] = resizeMode;
-		mod.modResults["NitroSplashLogoWidth"] = String(logoWidth);
+		const { logo, brand, brandBottom } = pictureFrames(mod.modRequest.projectRoot, options);
+		mod.modResults.NitroSplashBackground = background;
+		mod.modResults.NitroSplashResizeMode = resizeMode;
+		mod.modResults.NitroSplashLogoWidth = String(logo.frame.width);
+		mod.modResults.NitroSplashLogoHeight = String(logo.frame.height);
+		if (brand) {
+			mod.modResults.NitroSplashBrandWidth = String(brand.frame.width);
+			mod.modResults.NitroSplashBrandHeight = String(brand.frame.height);
+			mod.modResults.NitroSplashBrandBottom = String(brandBottom);
+		}
 		if (options.darkBackground) {
-			mod.modResults["NitroSplashDarkBackground"] = hexToColor(options.darkBackground);
+			mod.modResults.NitroSplashDarkBackground = hexToColor(options.darkBackground);
 		}
 		if (options.statusBarHidden) {
-			mod.modResults["UIStatusBarHidden"] = true;
+			mod.modResults.UIStatusBarHidden = true;
 		}
 		return mod;
 	});
 
 	config = withIosSplashAssets(config, options);
+	config = withAndroidDrawables(config, options);
 	return config;
+}
+
+function pictureFrames(projectRoot, options) {
+	const logoWidth = options.logoWidth ?? 120;
+	const logo = resolveFrame(projectRoot, options.logo, logoWidth) ?? {
+		abs: null,
+		frame: { width: logoWidth, height: logoWidth },
+	};
+	const brand = resolveFrame(projectRoot, options.brand, options.brandWidth ?? logoWidth);
+	return { logo, brand, brandBottom: options.brandBottom ?? 48 };
+}
+
+function withAndroidDrawables(config, options) {
+	return withDangerousMod(config, [
+		"android",
+		async (mod) => {
+			const projectRoot = mod.modRequest.projectRoot;
+			const drawable = path.join(
+				mod.modRequest.platformProjectRoot,
+				"app",
+				"src",
+				"main",
+				"res",
+				"drawable",
+			);
+			if (!fs.existsSync(path.join(mod.modRequest.platformProjectRoot, "app"))) {
+				return mod;
+			}
+			fs.mkdirSync(drawable, { recursive: true });
+			const logo = resolveFrame(projectRoot, options.logo, options.logoWidth ?? 120);
+			if (logo) {
+				const ext = path.extname(logo.abs).toLowerCase() || ".png";
+				fs.copyFileSync(logo.abs, path.join(drawable, `splashscreen_image${ext}`));
+			}
+			const brand = resolveFrame(
+				projectRoot,
+				options.brand,
+				options.brandWidth ?? options.logoWidth ?? 120,
+			);
+			if (brand) {
+				const ext = path.extname(brand.abs).toLowerCase() || ".png";
+				fs.copyFileSync(brand.abs, path.join(drawable, `splashscreen_brand${ext}`));
+			}
+			return mod;
+		},
+	]);
 }
 
 module.exports = withNitroSplash;

@@ -45,12 +45,16 @@ namespace margelo::nitro::nitrosplash {
     std::string backgroundColor     SWIFT_PRIVATE;
     SplashResizeMode resizeMode     SWIFT_PRIVATE;
     std::optional<double> logoWidth     SWIFT_PRIVATE;
+    std::optional<double> logoHeight     SWIFT_PRIVATE;
     std::optional<std::string> darkBackgroundColor     SWIFT_PRIVATE;
     std::optional<bool> statusBarHidden     SWIFT_PRIVATE;
+    std::optional<double> brandWidth     SWIFT_PRIVATE;
+    std::optional<double> brandHeight     SWIFT_PRIVATE;
+    std::optional<double> brandBottom     SWIFT_PRIVATE;
 
   public:
     SplashOptions() = default;
-    explicit SplashOptions(std::string backgroundColor, SplashResizeMode resizeMode, std::optional<double> logoWidth, std::optional<std::string> darkBackgroundColor, std::optional<bool> statusBarHidden): backgroundColor(backgroundColor), resizeMode(resizeMode), logoWidth(logoWidth), darkBackgroundColor(darkBackgroundColor), statusBarHidden(statusBarHidden) {}
+    explicit SplashOptions(std::string backgroundColor, SplashResizeMode resizeMode, std::optional<double> logoWidth, std::optional<double> logoHeight, std::optional<std::string> darkBackgroundColor, std::optional<bool> statusBarHidden, std::optional<double> brandWidth, std::optional<double> brandHeight, std::optional<double> brandBottom): backgroundColor(backgroundColor), resizeMode(resizeMode), logoWidth(logoWidth), logoHeight(logoHeight), darkBackgroundColor(darkBackgroundColor), statusBarHidden(statusBarHidden), brandWidth(brandWidth), brandHeight(brandHeight), brandBottom(brandBottom) {}
 
   public:
     friend bool operator==(const SplashOptions& lhs, const SplashOptions& rhs) = default;
@@ -69,8 +73,12 @@ namespace margelo::nitro {
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "backgroundColor"))),
         JSIConverter<margelo::nitro::nitrosplash::SplashResizeMode>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "resizeMode"))),
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "logoWidth"))),
+        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "logoHeight"))),
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "darkBackgroundColor"))),
-        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "statusBarHidden")))
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "statusBarHidden"))),
+        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "brandWidth"))),
+        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "brandHeight"))),
+        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "brandBottom")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::nitrosplash::SplashOptions& arg) {
@@ -78,8 +86,12 @@ namespace margelo::nitro {
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "backgroundColor"), JSIConverter<std::string>::toJSI(runtime, arg.backgroundColor));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "resizeMode"), JSIConverter<margelo::nitro::nitrosplash::SplashResizeMode>::toJSI(runtime, arg.resizeMode));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "logoWidth"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.logoWidth));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "logoHeight"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.logoHeight));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "darkBackgroundColor"), JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.darkBackgroundColor));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "statusBarHidden"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.statusBarHidden));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "brandWidth"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.brandWidth));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "brandHeight"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.brandHeight));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "brandBottom"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.brandBottom));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -93,8 +105,12 @@ namespace margelo::nitro {
       if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "backgroundColor")))) return false;
       if (!JSIConverter<margelo::nitro::nitrosplash::SplashResizeMode>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "resizeMode")))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "logoWidth")))) return false;
+      if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "logoHeight")))) return false;
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "darkBackgroundColor")))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "statusBarHidden")))) return false;
+      if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "brandWidth")))) return false;
+      if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "brandHeight")))) return false;
+      if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "brandBottom")))) return false;
       return true;
     }
   };

@@ -8,6 +8,8 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `HandoffMetrics` to properly resolve imports.
+namespace margelo::nitro::nitrosplash { struct HandoffMetrics; }
 // Forward declaration of `HideOptions` to properly resolve imports.
 namespace margelo::nitro::nitrosplash { struct HideOptions; }
 // Forward declaration of `HybridSplashscreenSpec` to properly resolve imports.
@@ -20,6 +22,7 @@ namespace margelo::nitro::nitrosplash { enum class SplashAnimation; }
 namespace Nitrosplash { class HybridSplashscreenSpec_cxx; }
 
 // Include C++ defined types
+#include "HandoffMetrics.hpp"
 #include "HideOptions.hpp"
 #include "HybridSplashscreenSpec.hpp"
 #include "SplashAnimation.hpp"
@@ -206,6 +209,15 @@ namespace margelo::nitro::nitrosplash::bridge::swift {
   }
   inline Result_bool_ create_Result_bool_(const std::exception_ptr& error) noexcept {
     return Result<bool>::withError(error);
+  }
+  
+  // pragma MARK: Result<HandoffMetrics>
+  using Result_HandoffMetrics_ = Result<HandoffMetrics>;
+  inline Result_HandoffMetrics_ create_Result_HandoffMetrics_(const HandoffMetrics& value) noexcept {
+    return Result<HandoffMetrics>::withValue(value);
+  }
+  inline Result_HandoffMetrics_ create_Result_HandoffMetrics_(const std::exception_ptr& error) noexcept {
+    return Result<HandoffMetrics>::withError(error);
   }
 
 } // namespace margelo::nitro::nitrosplash::bridge::swift

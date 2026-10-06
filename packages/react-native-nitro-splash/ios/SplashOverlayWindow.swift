@@ -11,6 +11,7 @@ final class SplashOverlayWindow {
 	static var overlayWindow: UIWindow?
 	static var containerView: UIView?
 	static var logoView: UIImageView?
+	static var brandView: UIImageView?
 	static var autoHidePrevented = false
 	static var visible = false
 	private static var observing = false
@@ -51,26 +52,25 @@ final class SplashOverlayWindow {
 			}
 			containerView = nil
 			logoView = nil
+			brandView = nil
 			visible = false
 		}
 		let info = Bundle.main.infoDictionary
 		let background = (info?["NitroSplashBackground"] as? String) ?? "#FFFFFF"
 		let dark = info?["NitroSplashDarkBackground"] as? String
 		let resize = resizeMode(from: info?["NitroSplashResizeMode"] as? String)
-		let logoWidth: Double
-		if let number = info?["NitroSplashLogoWidth"] as? NSNumber {
-			logoWidth = number.doubleValue
-		} else if let string = info?["NitroSplashLogoWidth"] as? String, let parsed = Double(string) {
-			logoWidth = parsed
-		} else {
-			logoWidth = 120
-		}
+		let logoWidth = plistDouble(info, key: "NitroSplashLogoWidth") ?? 120
+		let logoHeight = plistDouble(info, key: "NitroSplashLogoHeight") ?? logoWidth
 		let statusBarHidden = (info?["UIStatusBarHidden"] as? Bool) ?? false
 		show(
 			backgroundHex: background,
 			darkBackgroundHex: dark,
 			resizeMode: resize,
 			logoWidthPt: logoWidth,
+			logoHeightPt: logoHeight,
+			brandWidthPt: plistDouble(info, key: "NitroSplashBrandWidth"),
+			brandHeightPt: plistDouble(info, key: "NitroSplashBrandHeight"),
+			brandBottomPt: plistDouble(info, key: "NitroSplashBrandBottom"),
 			statusBarHidden: statusBarHidden,
 			windowHint: windowHint
 		)
@@ -81,11 +81,16 @@ final class SplashOverlayWindow {
 		darkBackgroundHex: String?,
 		resizeMode: SplashResizeMode,
 		logoWidthPt: Double,
+		logoHeightPt: Double,
+		brandWidthPt: Double?,
+		brandHeightPt: Double?,
+		brandBottomPt: Double?,
 		statusBarHidden: Bool,
 		windowHint: UIWindow? = nil
 	) {
 		guard let hostWindow = hostWindow(hint: windowHint) else { return }
 		let targetWidth = min(max(logoWidthPt, 48.0), 320.0)
+		let targetHeight = logoHeightPt * (targetWidth / max(logoWidthPt, 1))
 		if let existing = containerView, existing.superview != nil {
 			updateBackground(hex: currentHex(light: backgroundHex, dark: darkBackgroundHex, window: hostWindow))
 			existing.superview?.bringSubviewToFront(existing)
@@ -93,6 +98,7 @@ final class SplashOverlayWindow {
 		}
 		containerView = nil
 		logoView = nil
+		brandView = nil
 		visible = false
 
 		let frame = hostWindow.bounds
@@ -106,21 +112,38 @@ final class SplashOverlayWindow {
 		container.isUserInteractionEnabled = false
 
 		let imageView = UIImageView()
-		let logoSize = CGFloat(targetWidth)
+		let logoWidth = CGFloat(targetWidth)
+		let logoHeight = CGFloat(targetHeight)
 		imageView.frame = CGRect(
-			x: (frame.width - logoSize) / 2,
-			y: (frame.height - logoSize) / 2,
-			width: logoSize,
-			height: logoSize
+			x: (frame.width - logoWidth) / 2,
+			y: (frame.height - logoHeight) / 2,
+			width: logoWidth,
+			height: logoHeight
 		)
 		imageView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
 		imageView.contentMode = resizeMode.toContentMode()
 		imageView.backgroundColor = .clear
 		imageView.tintColor = .white
-		if let image = SplashImageLoader.loadLogo(targetWidthPt: targetWidth) {
+		if let image = SplashImageLoader.loadLogo(targetWidthPt: targetWidth, targetHeightPt: targetHeight) {
 			imageView.image = image.withRenderingMode(.alwaysOriginal)
 		}
 		container.addSubview(imageView)
+		if let brandWidthPt, let brandHeightPt, let brandBottomPt,
+			let brandImage = SplashImageLoader.loadBrand(targetWidthPt: brandWidthPt, targetHeightPt: brandHeightPt) {
+			let brandWidth = CGFloat(brandWidthPt)
+			let brandHeight = CGFloat(brandHeightPt)
+			let brand = UIImageView(frame: CGRect(
+				x: (frame.width - brandWidth) / 2,
+				y: frame.height - CGFloat(brandBottomPt) - brandHeight,
+				width: brandWidth,
+				height: brandHeight
+			))
+			brand.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin]
+			brand.contentMode = .scaleAspectFit
+			brand.image = brandImage
+			container.addSubview(brand)
+			brandView = brand
+		}
 		hostWindow.addSubview(container)
 		hostWindow.bringSubviewToFront(container)
 
@@ -140,7 +163,18 @@ final class SplashOverlayWindow {
 		overlayWindow = nil
 		containerView = nil
 		logoView = nil
+		brandView = nil
 		visible = false
+	}
+
+	private static func plistDouble(_ info: [String: Any]?, key: String) -> Double? {
+		if let number = info?[key] as? NSNumber {
+			return number.doubleValue
+		}
+		if let string = info?[key] as? String, let parsed = Double(string) {
+			return parsed
+		}
+		return nil
 	}
 
 	private static func resizeMode(from raw: String?) -> SplashResizeMode {

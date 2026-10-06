@@ -18,6 +18,7 @@ public protocol HybridSplashscreenSpec_protocol: HybridObject {
   func isVisible() throws -> Bool
   func preventAutoHide() throws -> Bool
   func setBackgroundColor(color: String) throws -> Void
+  func handoffMetrics() throws -> HandoffMetrics
 }
 
 public extension HybridSplashscreenSpec_protocol {

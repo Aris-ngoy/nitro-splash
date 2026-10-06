@@ -20,6 +20,7 @@ public final class HybridSplashscreen: HybridSplashscreenSpec {
 		let darkBackground = options.darkBackgroundColor
 		let resizeMode = options.resizeMode
 		let logoWidth = options.logoWidth ?? 120.0
+		let logoHeight = options.logoHeight ?? logoWidth
 		let statusBarHidden = options.statusBarHidden ?? false
 		DispatchQueue.main.async {
 			SplashOverlayWindow.show(
@@ -27,9 +28,37 @@ public final class HybridSplashscreen: HybridSplashscreenSpec {
 				darkBackgroundHex: darkBackground,
 				resizeMode: resizeMode,
 				logoWidthPt: logoWidth,
+				logoHeightPt: logoHeight,
+				brandWidthPt: options.brandWidth,
+				brandHeightPt: options.brandHeight,
+				brandBottomPt: options.brandBottom,
 				statusBarHidden: statusBarHidden
 			)
 		}
+	}
+
+	public func handoffMetrics() throws -> HandoffMetrics {
+		if Thread.isMainThread {
+			return metricsOnMain()
+		}
+		return DispatchQueue.main.sync {
+			metricsOnMain()
+		}
+	}
+
+	private func metricsOnMain() -> HandoffMetrics {
+		let window = SplashOverlayWindow.findKeyWindow()
+		let dark: Bool
+		if #available(iOS 13.0, *) {
+			dark = window?.traitCollection.userInterfaceStyle == .dark
+		} else {
+			dark = false
+		}
+		return HandoffMetrics(
+			darkMode: dark,
+			statusBarHeight: Double(window?.safeAreaInsets.top ?? 0),
+			navigationBarHeight: 0
+		)
 	}
 
 	public func hide(options: HideOptions?) throws -> Promise<Bool> {

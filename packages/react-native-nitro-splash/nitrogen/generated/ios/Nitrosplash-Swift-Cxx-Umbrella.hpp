@@ -8,6 +8,8 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `HandoffMetrics` to properly resolve imports.
+namespace margelo::nitro::nitrosplash { struct HandoffMetrics; }
 // Forward declaration of `HideOptions` to properly resolve imports.
 namespace margelo::nitro::nitrosplash { struct HideOptions; }
 // Forward declaration of `HybridSplashscreenSpec` to properly resolve imports.
@@ -20,6 +22,7 @@ namespace margelo::nitro::nitrosplash { struct SplashOptions; }
 namespace margelo::nitro::nitrosplash { enum class SplashResizeMode; }
 
 // Include C++ defined types
+#include "HandoffMetrics.hpp"
 #include "HideOptions.hpp"
 #include "HybridSplashscreenSpec.hpp"
 #include "SplashAnimation.hpp"

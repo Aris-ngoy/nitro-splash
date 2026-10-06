@@ -11,12 +11,24 @@ import android.graphics.drawable.Drawable
 /// at full resolution. PNG/JPG/WebP via BitmapFactory. SVG/Lottie are
 /// pre-rasterized by the CLI — runtime SVG parsing stays off the hot path.
 object SplashBitmapLoader {
-  fun loadLogo(context: Context, targetWidthDp: Int): Bitmap? {
+  fun loadLogo(context: Context, targetWidthDp: Int, targetHeightDp: Int): Bitmap? {
+    return load(
+      context,
+      listOf("splashscreen_image", "bootsplash_logo", "splashscreen_logo"),
+      targetWidthDp,
+      targetHeightDp,
+    )
+  }
+
+  fun loadBrand(context: Context, targetWidthDp: Int, targetHeightDp: Int): Bitmap? {
+    return load(context, listOf("splashscreen_brand"), targetWidthDp, targetHeightDp)
+  }
+
+  private fun load(context: Context, candidates: List<String>, targetWidthDp: Int, targetHeightDp: Int): Bitmap? {
     val density = context.resources.displayMetrics.density
-    val targetPx = (targetWidthDp * density).toInt().coerceAtLeast(96)
+    val targetPx = (maxOf(targetWidthDp, targetHeightDp) * density).toInt().coerceAtLeast(1)
     val res = context.resources
     val pkg = context.packageName
-    val candidates = listOf("splashscreen_image", "bootsplash_logo", "splashscreen_logo")
     for (name in candidates) {
       val id = res.getIdentifier(name, "drawable", pkg)
       if (id == 0) continue

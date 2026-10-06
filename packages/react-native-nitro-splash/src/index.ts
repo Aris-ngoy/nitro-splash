@@ -8,6 +8,13 @@ export {
 	show,
 	updateOptions,
 } from "./SplashModule";
-export type { HideOptions, SplashOptions, Splashscreen } from "./specs/Splashscreen.nitro";
+export type {
+	HandoffMetrics,
+	HideOptions,
+	SplashOptions,
+	Splashscreen,
+} from "./specs/Splashscreen.nitro";
 export { SplashAnimation, SplashResizeMode } from "./specs/Splashscreen.nitro";
+export type { Manifest, UseHandoffConfig } from "./useHandoff";
+export { useHandoff } from "./useHandoff";
 export { useSplashReady } from "./useSplashReady";

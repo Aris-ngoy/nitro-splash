@@ -7,6 +7,8 @@
 
 #include "JHybridSplashscreenSpec.hpp"
 
+// Forward declaration of `HandoffMetrics` to properly resolve imports.
+namespace margelo::nitro::nitrosplash { struct HandoffMetrics; }
 // Forward declaration of `SplashOptions` to properly resolve imports.
 namespace margelo::nitro::nitrosplash { struct SplashOptions; }
 // Forward declaration of `SplashResizeMode` to properly resolve imports.
@@ -18,6 +20,8 @@ namespace margelo::nitro::nitrosplash { enum class SplashAnimation; }
 
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
+#include "HandoffMetrics.hpp"
+#include "JHandoffMetrics.hpp"
 #include "SplashOptions.hpp"
 #include "JSplashOptions.hpp"
 #include <string>
@@ -95,6 +99,11 @@ namespace margelo::nitro::nitrosplash {
   void JHybridSplashscreenSpec::setBackgroundColor(const std::string& color) {
     static const auto method = _javaPart->javaClassStatic()->getMethod<void(jni::alias_ref<jni::JString> /* color */)>("setBackgroundColor");
     method(_javaPart, jni::make_jstring(color));
+  }
+  HandoffMetrics JHybridSplashscreenSpec::handoffMetrics() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JHandoffMetrics>()>("handoffMetrics");
+    auto __result = method(_javaPart);
+    return __result->toCpp();
   }
 
 } // namespace margelo::nitro::nitrosplash
