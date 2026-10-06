@@ -19,6 +19,7 @@
 		"codegen": "bun --filter react-native-nitro-splash codegen",
 		"test": "turbo run test",
 		"example": "bun --cwd apps/example",
+		"bare": "bun --cwd apps/bare",
 		"prepare": "husky"
 	},
 	"devDependencies": {

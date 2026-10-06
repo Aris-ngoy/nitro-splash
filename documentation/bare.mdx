@@ -1,0 +1,53 @@
+---
+title: "Bare React Native"
+description: "Wire the launch picture into an iOS and Android project that does not use the Expo plugin."
+keywords: ["bare", "Info.plist", "storyboard", "android"]
+---
+
+Without the Expo plugin, you write the same manifest picture into the native project. The overlay reads those values at launch. The JavaScript API is unchanged: call `preventAutoHideAsync`, then `hideAsync` or `useHandoff`.
+
+Generate the frame first so the numbers match the file you will require from JavaScript. See [Manifest](/manifest).
+
+## iOS
+
+1. Add the logo to the asset catalog as `SplashScreen` (the overlay also looks for `SplashScreenLogo` and `splashscreen_image`).
+2. Center that image on the launch storyboard and pin its width and height to the manifest logo frame.
+3. Set the storyboard background to the manifest background.
+4. Add these keys to `Info.plist`:
+
+```xml Info.plist
+<key>NitroSplashBackground</key>
+<string>#0B1220</string>
+<key>NitroSplashLogoWidth</key>
+<string>120</string>
+<key>NitroSplashLogoHeight</key>
+<string>120</string>
+<key>NitroSplashResizeMode</key>
+<string>contain</string>
+```
+
+Optional keys: `NitroSplashDarkBackground`, `NitroSplashBrandWidth`, `NitroSplashBrandHeight`, `NitroSplashBrandBottom`.
+
+The overlay attaches from a `+load` hook, before JavaScript runs, and covers the storyboard.
+
+## Android
+
+Put the logo at `res/drawable/splashscreen_image.png`. A brand image, if you have one, is `res/drawable/splashscreen_brand.png`.
+
+```xml res/values/colors.xml
+<color name="nitrosplash_background">#0B1220</color>
+```
+
+```xml res/values/strings.xml
+<string name="nitrosplash_logo_width">120</string>
+<string name="nitrosplash_logo_height">120</string>
+<string name="nitrosplash_resize_mode">contain</string>
+```
+
+Set `android:windowBackground` on `AppTheme` to a drawable that paints `nitrosplash_background` and centers the logo at the manifest size. That drawable is what the user sees until the overlay is attached. The overlay itself is created when `preventAutoHideAsync` or `show` runs.
+
+Optional resources: `nitrosplash_dark_background`, `nitrosplash_brand_width`, `nitrosplash_brand_height`, `nitrosplash_brand_bottom`.
+
+<Note>
+  On Xcode 27 the React Native CLI looks for `Simulator.app` inside the Xcode bundle. That app is gone; the simulator UI is DeviceHub. Boot a simulator in DeviceHub, then build with `xcodebuild` and install with `xcrun simctl` if `react-native run-ios` stops on that missing path.
+</Note>

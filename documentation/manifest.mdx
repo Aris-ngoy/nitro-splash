@@ -1,0 +1,49 @@
+---
+title: "Manifest"
+description: "The one picture shared by the launch screen, the overlay, and the JavaScript replica."
+keywords: ["manifest", "logo frame", "cli", "generate"]
+---
+
+The manifest is the picture everyone draws:
+
+- `background`, and an optional `darkBackground`
+- `logo.width` and `logo.height`
+- an optional `brand` with `width`, `height`, and `bottom`
+
+The launch screen, the native overlay, and `useHandoff` all use that frame. If they disagree, the logo jumps when the overlay appears, or flashes when the overlay is removed.
+
+## Expo
+
+You do not write `manifest.json` for an Expo app. The plugin measures the logo during prebuild and writes the frame into the native project:
+
+- iOS storyboard constraints and `NitroSplashLogoWidth` / `NitroSplashLogoHeight` in `Info.plist`
+- Android `nitrosplash_logo_width` and `nitrosplash_logo_height` strings, plus the splash drawable
+
+Pass the same `logoWidth` you will later put in a JavaScript `Manifest` if you use `useHandoff`.
+
+## Generate a manifest file
+
+The CLI copies the logo and writes `manifest.json`. Nothing in the app loads that file on its own. Import it yourself when you build a replica.
+
+```bash
+node node_modules/react-native-nitro-splash/cli/generate.js \
+  --logo ./assets/logo.png \
+  --background "#0B1220" \
+  --logo-width 120 \
+  --out ./assets/nitrosplash
+```
+
+Optional flags: `--dark-background`, `--brand`, `--brand-width`, `--brand-bottom`.
+
+A square logo requested at width 120 produces:
+
+```json assets/nitrosplash/manifest.json
+{
+  "background": "#0B1220",
+  "logo": { "width": 120, "height": 120 }
+}
+```
+
+<Info>
+  The CLI measures PNG and JPEG only. Other files are copied, and a missing size falls back to a square of `logoWidth`.
+</Info>

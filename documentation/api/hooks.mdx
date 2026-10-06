@@ -1,0 +1,63 @@
+---
+title: "Hooks"
+description: "useHandoff and useSplashReady."
+keywords: ["useHandoff", "useSplashReady", "Manifest"]
+---
+
+## useHandoff
+
+```ts
+function useHandoff(config: UseHandoffConfig): {
+  container: ReplicaContainerProps;
+  logo: ReplicaImageProps;
+  brand: ReplicaImageProps;
+}
+```
+
+Builds the replica props for the manifest picture, then calls `config.animate` after the native overlay is removed with no animation.
+
+`UseHandoffConfig`:
+
+| Field | Required | What it does |
+| --- | --- | --- |
+| `manifest` | yes | Background, logo frame, optional dark background, optional brand frame. |
+| `animate` | yes | Called once, after the overlay is gone. |
+| `logo` | no | Image source drawn at `manifest.logo` width and height. |
+| `brand` | no | Image source drawn at the brand frame. Skipped when the manifest has no brand. |
+| `ready` | no | Defaults to `true`. Set `false` until your own layout is ready. |
+| `statusBarTranslucent` | no | Android. When `false`, the replica margin cancels the status bar. Default `false`. |
+| `navigationBarTranslucent` | no | Android. Same for the navigation bar. Default `false`. |
+
+`Manifest`:
+
+```ts
+type Manifest = {
+  background: string;
+  darkBackground?: string;
+  logo: { width: number; height: number };
+  brand?: { bottom: number; width: number; height: number };
+};
+```
+
+Spread `container` onto the full-screen view, and `logo` onto the image. `logo.style` is the manifest frame. See [Animated handoff](/handoff).
+
+## useSplashReady
+
+```ts
+function useSplashReady(): {
+  ready: boolean;
+  done: (animation?: SplashAnimation) => Promise<void>;
+}
+```
+
+On mount, calls `preventAutoHideAsync`. `ready` flips to `true` after that call is kicked off. `done()` hides with a 350ms animation and ignores later calls. The default animation is `SplashAnimation.Fade`.
+
+```tsx
+const { done } = useSplashReady();
+
+useEffect(() => {
+  done().catch(() => undefined);
+}, [done]);
+```
+
+`done` is a new function every render. If you list it as an effect dependency, call it once and ignore the identity, or call `hideAsync` yourself from [Hide the splash](/hide).

@@ -1,0 +1,52 @@
+---
+title: "Hide the splash"
+description: "Keep the native overlay up until the app is ready, then hide it with a built-in animation."
+keywords: ["hideAsync", "preventAutoHideAsync", "animation", "fade"]
+---
+
+The overlay stays until you hide it. Call `preventAutoHideAsync` once, as early as you can, so the overlay is showing before your first React render. Then call `hideAsync`.
+
+```tsx
+import { hideAsync, preventAutoHideAsync, SplashAnimation } from "react-native-nitro-splash";
+
+preventAutoHideAsync().catch(() => undefined);
+
+await hideAsync({ animation: SplashAnimation.Fade, durationMs: 350 });
+```
+
+`hideAsync` returns `false` when the overlay was already gone. A second `preventAutoHideAsync` also returns `false`.
+
+## Animations
+
+| Value | What you see |
+| --- | --- |
+| `SplashAnimation.None` | The overlay is removed immediately. This is what the handoff uses. |
+| `SplashAnimation.Fade` | Opacity to zero. This is the default. |
+| `SplashAnimation.SlideUp` | The overlay slides up. |
+| `SplashAnimation.SlideDown` | The overlay slides down. |
+| `SplashAnimation.Scale` | The overlay scales down. |
+| `SplashAnimation.FadeSlide` | Fade combined with a slide. |
+
+Duration is `durationMs`. The default is `350`.
+
+## Keep your UI underneath
+
+Render the real screen while the overlay is up. `hideAsync` reveals it. Returning `null` until hide leaves a blank frame if the overlay and the first paint do not line up.
+
+```tsx
+export default function App() {
+  useEffect(() => {
+    hideAsync({ animation: SplashAnimation.Fade, durationMs: 350 }).catch(() => undefined);
+  }, []);
+
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>Ready</Text>
+    </View>
+  );
+}
+```
+
+<Note>
+  `useSplashReady` is a small wrapper around the same two calls. It prevents auto-hide on mount and gives you `done()`, which fades for 350ms. See [Hooks](/api/hooks).
+</Note>

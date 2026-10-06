@@ -1,0 +1,77 @@
+---
+title: "Splash functions"
+description: "preventAutoHideAsync, hideAsync, show, and the native splash object."
+keywords: ["preventAutoHideAsync", "hideAsync", "show", "SplashAnimation"]
+---
+
+Import these from `react-native-nitro-splash`.
+
+## preventAutoHideAsync
+
+```ts
+function preventAutoHideAsync(): Promise<boolean>
+```
+
+Shows the overlay from the native manifest resources and keeps it up. Resolves `true` the first time. Later calls resolve `false`.
+
+Call it at module scope, before the component tree renders.
+
+## hideAsync
+
+```ts
+function hideAsync(options?: HideOptions): Promise<boolean>
+```
+
+Removes the overlay. Resolves `true` when an overlay was visible.
+
+`HideOptions`:
+
+- `animation` — a `SplashAnimation`. Default `Fade`.
+- `durationMs` — default `350`.
+
+`SplashAnimation`: `None`, `Fade`, `SlideUp`, `SlideDown`, `Scale`, `FadeSlide`.
+
+## show
+
+```ts
+function show(options: SplashOptions): void
+```
+
+Draws an overlay at the sizes you pass. This does not run the 48 to 320 clamp. Cold start uses the sizes the plugin or your native project already wrote.
+
+`SplashOptions`:
+
+- `backgroundColor` (required)
+- `resizeMode` — `SplashResizeMode.Contain`, `Cover`, `Native`, or `Stretch`
+- `logoWidth`, `logoHeight`
+- `darkBackgroundColor`
+- `statusBarHidden`
+- `brandWidth`, `brandHeight`, `brandBottom`
+
+## setBackgroundColor
+
+```ts
+function setBackgroundColor(color: string): void
+```
+
+Updates the overlay background while it is visible. Pass a hex color.
+
+## isVisible
+
+```ts
+function isVisible(): boolean
+```
+
+Whether the overlay is currently attached.
+
+## getRawSplashscreen
+
+```ts
+function getRawSplashscreen(): Splashscreen
+```
+
+The Nitro hybrid object. The helpers above are the API to use. The raw object also exposes `handoffMetrics()`, which `useHandoff` reads for dark mode and Android system-bar insets.
+
+<Note>
+  `updateOptions` is exported and currently does nothing. Change a visible background with `setBackgroundColor`. Change the logo frame by regenerating the native project.
+</Note>

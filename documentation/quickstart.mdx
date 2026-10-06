@@ -1,0 +1,85 @@
+---
+title: "Quickstart"
+description: "Install nitro-splash in an Expo app, keep the splash up, and fade it out when you are ready."
+keywords: ["quickstart", "expo", "preventAutoHideAsync", "hideAsync"]
+---
+
+This path is an Expo app that shows your logo, waits until you say the app is ready, then fades the splash away. The screen underneath is already mounted, so the fade reveals your UI.
+
+<Steps>
+  <Step title="Install">
+    <Tabs>
+      <Tab title="bun">
+        ```bash
+        bunx expo install react-native-nitro-splash react-native-nitro-modules
+        ```
+      </Tab>
+      <Tab title="npm">
+        ```bash
+        npx expo install react-native-nitro-splash react-native-nitro-modules
+        ```
+      </Tab>
+      <Tab title="yarn">
+        ```bash
+        yarn expo install react-native-nitro-splash react-native-nitro-modules
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Add the plugin">
+    Point the plugin at a logo in your app. Prebuild writes the launch screen from these options.
+
+    ```json app.json
+    {
+      "expo": {
+        "plugins": [
+          [
+            "react-native-nitro-splash",
+            {
+              "background": "#0B1220",
+              "logo": "./assets/logo.png",
+              "logoWidth": 120,
+              "resizeMode": "contain"
+            }
+          ]
+        ]
+      }
+    }
+    ```
+
+    You do not also need an Expo `splash` block. The plugin sets that for you. Run `npx expo prebuild`, or `npx expo run:ios` / `npx expo run:android`, so the native project picks up the logo.
+  </Step>
+  <Step title="Hide when you are ready">
+    Call `preventAutoHideAsync` before the first render. Render the app underneath. Call `hideAsync` when loading is finished.
+
+    ```tsx App.tsx
+    import { useEffect } from "react";
+    import { Text, View } from "react-native";
+    import { hideAsync, preventAutoHideAsync, SplashAnimation } from "react-native-nitro-splash";
+
+    preventAutoHideAsync().catch(() => undefined);
+
+    export default function App() {
+      useEffect(() => {
+        async function prepare() {
+          await loadSomething();
+          await hideAsync({ animation: SplashAnimation.Fade, durationMs: 350 });
+        }
+        prepare().catch(() => undefined);
+      }, []);
+
+      return (
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <Text>Ready</Text>
+        </View>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+`hideAsync` defaults to a 350ms fade when you omit the options.
+
+<Tip>
+  For an exit you draw yourself, such as a logo that scales away, use [the handoff](/handoff) instead of `hideAsync`.
+</Tip>
